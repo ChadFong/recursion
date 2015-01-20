@@ -20,10 +20,12 @@ var stringifyJSON = function(obj) {
 
 var writer = function (written, toWrite, end) {
 
+// Needs a base-case
+
 	if(Array.isArray(toWrite)){
 		written += arrayWriter(toWrite);
 		toWrite = end.splice(0,1);
- 	 	writer(written, toWrite, end);
+ 	 	writer(written, toWrite, end); // Incorrect implementation — filler.  end will go to null
 	}
 	else if(typeof toWrite === 'object') {
 		writer('{', toWrite, '}');
@@ -37,11 +39,7 @@ var writer = function (written, toWrite, end) {
 };
 
 var arrayWriter = function(array) {
-	var first;
-	if(typeof array[0] === 'string'){
-		first = "\"" + array[0] + "\"";
-	}
-	else {first = array[0];}
+	var first = stringTester(array[0]);
 	var result = '[' + first;
 	for(var i=1 ; i<array.length ; i++) {
 		if(typeof array[i] === 'string'){
@@ -55,9 +53,22 @@ var arrayWriter = function(array) {
 };
 
 var objectWriter = function(obj) {
-	var result = '{';
+	var result = '{', keyVar, objVar;
 	for(var key in obj) {
-		result += key + ':' + obj[key];
+		keyVar = stringTester(key);
+		objVar = stringTester(obj[key]);
+		result += keyVar + ':' + objVar;
 	}
 	return result += '}';
+};
+
+var stringTester = function(input) {
+	var result;
+	if(typeof input === 'string') {
+		result = "\"" + input + "\"";
+	}
+	else {
+		result = input;
+	}
+	return result;
 };
