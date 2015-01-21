@@ -4,22 +4,48 @@
 // };
 
 // But instead we're going to implement it from scratch:
-/*
+
 var getElementsByClassName = function(className){
 	var desiredElements = [], remainingNodes = [];
-	if(document.body.className === className) {
-		desiredElements.push(document.body);
-	}
-	var nodeFinder = function(aNode) {
-		var children = textNodeRemover(aNode.childNodes);
-		remainingNodes.unshift(children.slice(1));
-		if(children[0].classList)
+	
+	var nodeCheckerRecursiveRouter = function(node) {
+		if(matchesClass(node, className)) {
+			desiredElements.push(node);
+		}
 
-	}
+		if(node.hasChildNodes()) {
+			childNodeTraverser(node);
+		}
+		else {
+			nodeCheckerRecursiveRouter(remainingNodes.shift());
+		}
+	};
+
+
+	var childNodeTraverser = function(aNode) {
+
+		if(aNode === [] && remainingNodes === []) {
+			return desiredElements;
+		}
+
+		var children = textNodeRemover(aNode.childNodes);
+		var remaining = children.slice(1);
+		if(remaining.length > 0) {
+			for(var i=remaining.length-1 ; i>=0 ; i--) {
+				remainingNodes.unshift(remaining[i]);
+			}
+		}
+		nodeCheckerRecursiveRouter(children[0]);
+	};
+
+	nodeCheckerRecursiveRouter(document.body);
+	return desiredElements;
 
 };
-*/
-var classMatcher = function(node, desiredClass) {
+
+
+
+var matchesClass = function(node, desiredClass) {
 	var testResult = true;
 	var classArray = desiredClass.split(/[\ ]/g);
 	for(var i=0 ; i<classArray.length ; i++) {
