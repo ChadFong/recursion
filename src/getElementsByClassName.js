@@ -9,38 +9,34 @@ var getElementsByClassName = function(className){
 	var desiredElements = [], remainingNodes = [];
 	
 	var nodeCheckerRecursiveRouter = function(node) {
+		if(node === undefined) {
+			return desiredElements;
+		}
 		if(matchesClass(node, className)) {
 			desiredElements.push(node);
 		}
 
 		if(node.hasChildNodes()) {
-			childNodeTraverser(node);
+			var children = textNodeRemover(node.childNodes);
+			var remaining = children.slice(1);
+			if(children.length === 0) {
+				nodeCheckerRecursiveRouter(remainingNodes.shift());
+			}
+			if(remaining.length > 0) {
+				for(var i=remaining.length-1 ; i>=0 ; i--) {
+					remainingNodes.unshift(remaining[i]);
+				}
+			}
+			nodeCheckerRecursiveRouter(children[0]);
 		}
+
 		else {
 			nodeCheckerRecursiveRouter(remainingNodes.shift());
 		}
 	};
 
-
-	var childNodeTraverser = function(aNode) {
-
-		if(aNode === [] && remainingNodes === []) {
-			return desiredElements;
-		}
-
-		var children = textNodeRemover(aNode.childNodes);
-		var remaining = children.slice(1);
-		if(remaining.length > 0) {
-			for(var i=remaining.length-1 ; i>=0 ; i--) {
-				remainingNodes.unshift(remaining[i]);
-			}
-		}
-		nodeCheckerRecursiveRouter(children[0]);
-	};
-
 	nodeCheckerRecursiveRouter(document.body);
 	return desiredElements;
-
 };
 
 
