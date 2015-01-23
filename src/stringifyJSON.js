@@ -3,6 +3,12 @@
 
 // but you don't so you're going to write it from scratch:
 
+/*
+Original Implementation:
+var test = new SpeedTest(meerkat, [[[0,1],[2,3,[{'x':3, 'four': [[[[3]]]]},5,[6,[7]]],8]]], 100000);
+Average execution time across 100000 repetitions: 0.03158ms
+*/
+
 var tester = function (input) {
 	var a = stringifyJSON(input);
 	var b = JSON.stringify(input);
@@ -10,39 +16,61 @@ var tester = function (input) {
 	console.log('mine: '+a + ' ___ goal: ' + b + ' same? :' + c);
 };
 
-var stringifyJSON = function(obj) {
-	var stringifiedJSON = '';
-	var failsTester = function(input) {
-		for(var key in input) {
-			if(typeof input[key] === 'function' || input[key] === undefined) {
-				stringifiedJSON = "{}";
-			}
-		}
-		if(stringifiedJSON !== "{}"){
-			return JSONstringifier(obj, []);
-		}
-	};
 
-	var JSONstringifier = function(current, rest) {
-		if(current === undefined) {          //Base case
-			return stringifiedJSON;
+function SpeedTest(testImplement, testParams, repetitions) {
+	this.testImplement = testImplement;
+	this.testParams = testParams;
+	this.repetitions = repetitions || 10000;
+	this.average = 0;
+}
+
+SpeedTest.prototype = {
+	startTest : function() {
+		var beginTime, endTime, sumTimes = 0;
+		for(var i=0, x=this.repetitions ; i<x ; i++) {
+			beginTime = +new Date();
+			this.testImplement(this.testParams);
+			endTime = +new Date();
+			sumTimes += endTime - beginTime;
 		}
-		if(Array.isArray(current)) {
-			stringifiedJSON += stringifyArray(current);
-			JSONstringifier(rest.shift(), rest);
-		}
-		else if(typeof current === 'object' && current !== null) {
-			stringifiedJSON += stringifyObject(current);
-			JSONstringifier(rest.shift(), rest);
-		}
-		else {
-			stringifiedJSON += stringifyElement(current);
-			JSONstringifier(rest.shift(), rest);
-		}
-	};
-	failsTester(obj);                       //  Contains the executable for JSONstringifier.  Tests for fail cases first.
-	return stringifiedJSON;
+		this.average = sumTimes/this.repetitions;
+		return console.log("Average execution time across " + this.repetitions + " repetitions: " + this.average + "ms");
+	}
 };
+
+var stringifyJSON = function(obj) {
+	var stringifiedJSON = '',
+		failsTester = function(input) {
+			for(var key in input) {
+				if(typeof input[key] === 'function' || input[key] === undefined) {
+					stringifiedJSON = "{}";
+				}
+			}
+			if(stringifiedJSON !== "{}"){
+				return JSONstringifier(obj, []);
+			}
+		},
+
+		JSONstringifier = function(current, rest) {
+			if(current === undefined) {          //Base case
+				return stringifiedJSON;
+			}
+			if(Array.isArray(current)) {
+				stringifiedJSON += stringifyArray(current);
+				JSONstringifier(rest.shift(), rest);
+			}
+			else if(typeof current === 'object' && current !== null) {
+				stringifiedJSON += stringifyObject(current);
+				JSONstringifier(rest.shift(), rest);
+			}
+			else {
+				stringifiedJSON += stringifyElement(current);
+				JSONstringifier(rest.shift(), rest);
+			}
+		};
+		failsTester(obj);                       //  Contains the executable for JSONstringifier.  Tests for fail cases first.
+		return stringifiedJSON;
+	};
 
 var stringifyArray = function(nestedArray) {
 	var nestedArrayChecker = function(potentiallyNestedArray) {
