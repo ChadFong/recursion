@@ -6,9 +6,9 @@
 // But instead we're going to implement it from scratch:
 
 var getElementsByClassName = function(className){
-	var desiredElements = [], remainingNodes = [];
+	var desiredElements = [], remainingNodes = [],
 	
-	var nodeCheckerRecursiveRouter = function(node) {
+	nodeCheckerRecursiveRouter = function(node) {
 		if(node === undefined) {
 			return desiredElements;
 		}
@@ -17,13 +17,13 @@ var getElementsByClassName = function(className){
 		}
 
 		if(node.hasChildNodes()) {
-			var children = textNodeRemover(node.childNodes);
-			var remaining = children.slice(1);
-			if(children.length === 0) {
+			var children = textNodeRemover(node.childNodes), childrenLen = children.length,
+				remaining = children.slice(1), remainingLen = remaining.length;
+			if(childrenLen === 0) {
 				nodeCheckerRecursiveRouter(remainingNodes.shift());
 			}
-			if(remaining.length > 0) {
-				for(var i=remaining.length-1 ; i>=0 ; i--) {
+			if(remainingLen > 0) {
+				for(var i=remainingLen-1 ; i>=0 ; i--) {
 					remainingNodes.unshift(remaining[i]);
 				}
 			}
@@ -42,9 +42,9 @@ var getElementsByClassName = function(className){
 
 
 var matchesClass = function(node, desiredClass) {
-	var testResult = true;
-	var classArray = desiredClass.split(/[\ ]/g);
-	for(var i=0 ; i<classArray.length ; i++) {
+	var testResult = true,
+		classArray = desiredClass.split(/[\ ]/g);
+	for(var i=0, x=classArray.length ; i<x ; i++) {
 		if(!node.classList.contains(classArray[i])) {
 			testResult = false;
 		}
