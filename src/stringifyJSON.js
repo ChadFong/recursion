@@ -6,11 +6,10 @@
 /*
 Original Implementation:
 var test = new SpeedTest(meerkat, [[[0,1],[2,3,[{'x':3, 'four': [[[[3]]]]},5,[6,[7]]],8]]], 100000);
-Average execution time across 100000 repetitions: 0.03158ms
+Average execution time across 100000 repetitions: 0.03304ms
 
 Best Practices Implementation:
- Average execution time across 100000 repetitions: 0.03434ms
-
+ Average execution time across 100000 repetitions: 0.03038ms
 */
 
 var tester = function (input) {
