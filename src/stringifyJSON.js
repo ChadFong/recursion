@@ -75,18 +75,18 @@ var stringifyJSON = function(obj) {
 var stringifyArray = function(nestedArray) {
 	var nestedArrayChecker = function(potentiallyNestedArray) {
 		return _.some(potentiallyNestedArray, Array.isArray);
-	};
-	var stringifiedArray = '[';
-	var objectInArrayChecker = function(input, prepend, append) {
+	},
+		stringifiedArray = '[',
+		objectInArrayChecker = function(input, prepend, append) {
 		if(typeof input === 'object' && input !== null) {
 			stringifiedArray += prepend + stringifyObject(input) + append;
 		}
 		else {
 			stringifiedArray += prepend + stringifyElement(input) + append;
 		}
-	};
+	},
 
-	var arrayStringifier = function(current, rest) {
+		arrayStringifier = function(current, rest) {
 		if((current === undefined || current.length === 0) && (rest.length === 0)) {
 			return stringifiedArray;
 		}
@@ -109,7 +109,7 @@ var stringifyArray = function(nestedArray) {
 			else {
 				objectInArrayChecker(current[0], '', '');
 			}
-			for(var i=1 ; i<current.length ; i++) {                  //  Iterate through and copy over
+			for(var i=1, x=current.length ; i<x ; i++) {                  //  Iterate through and copy over
 				objectInArrayChecker(current[i],',', '');                //  Writes to stringifiedArray
 		}
 		stringifiedArray += ']';
@@ -123,9 +123,9 @@ var stringifyArray = function(nestedArray) {
 	};
 
 	arrayStringifier(nestedArray, []);
-	var openParen = stringifiedArray.split(/[\[]/g).length-1;
-	var closeParen = stringifiedArray.split(/[\]]/g).length-1;
-	var parens = openParen - closeParen;
+	var openParen = stringifiedArray.split(/[\[]/g).length-1,
+		closeParen = stringifiedArray.split(/[\]]/g).length-1,
+		parens = openParen - closeParen;
 	while(parens >0) {
   	parens--;
   	stringifiedArray+= ']';
